@@ -164,6 +164,10 @@ const printOutput = (res: ExecRes): void => {
 }
 
 async function runLint(lintPath: string, patchPath: string): Promise<void> {
+  if (core.getBooleanInput(`clean-cache`)) {
+    await cacheClean(lintPath)
+  }
+
   const debug = core.getInput(`debug`)
   if (debug.split(`,`).includes(`cache`)) {
     const res = await execShellCommand(`${lintPath} cache status`)
@@ -278,6 +282,25 @@ async function runLint(lintPath: string, patchPath: string): Promise<void> {
   }
 
   core.info(`Ran golangci-lint in ${Date.now() - startedAt}ms`)
+}
+
+async function cacheClean(lintPath: string): Promise<void> {
+  const cmdCacheClean = `${lintPath} cache clean`
+
+  core.info(`Running [${cmdCacheClean}] ...`)
+
+  try {
+    const res = await execShellCommand(cmdCacheClean)
+    printOutput(res)
+    core.info(`golangci-lint cache cleaned`)
+  } catch (exc) {
+    // This logging passes issues to GitHub annotations but comments can be more convenient for some users.
+    printOutput(exc)
+
+    if (exc.code !== 1) {
+      core.setFailed(`golangci-lint cache clean exit with code ${exc.code}`)
+    }
+  }
 }
 
 export async function run(): Promise<void> {

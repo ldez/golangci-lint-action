@@ -230,6 +230,23 @@ with:
 
 If set the number is `<= 0`, the cache will be always invalidate (Not recommended).
 
+### `cache-clean`
+
+(optional)
+
+If set to `true`, it resets the golangci-lint cache (`golangci-lint cache clean`).
+
+I can be useful in some edge cases, but it should not be used by default because it will impact drastically the performances.
+
+The default value is `false`.
+
+```yml
+uses: golangci/golangci-lint-action@v5
+with:
+  cache-clean: true
+  # ...
+```
+
 ### `problem-matchers`
 
 (optional)
