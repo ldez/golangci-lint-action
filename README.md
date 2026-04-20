@@ -646,6 +646,33 @@ build and run the custom version of golangci-lint.
 
 For more information, see [module plugin system](https://golangci-lint.run/docs/plugins/module-plugins/).
 
+## Tips
+
+### Using Renovate to update the golangci-lint version 
+
+- https://docs.renovatebot.com/modules/manager/regex/
+
+```yaml
+- uses: golangci/golangci-lint-action@<sha>
+  with:
+    # renovate: datasource=github-releases depName=golangci/golangci-lint
+    version: v2.11.4
+```
+
+```json
+{
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/[^/]+\\.ya?ml$"],
+      "matchStrings": [
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+version:\\s+(?<currentValue>\\S+)"
+      ]
+    }
+  ]
+}
+```
+
 ## Performance
 
 The action was implemented with performance in mind:
